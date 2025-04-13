@@ -1,16 +1,31 @@
-## SEMDGO
-SEMDGO (sem-dee-go) is a tool designed to serve markdown files efficiently. SEMDGO means `SErve MarkDown with GO`. The project was initiated on April 8, 2025, and is actively maintained.
+# SEMDGO
 
-This tool aims to simplify the process of serving markdown-based content, providing an alternative to traditional HTML or frontend frameworks. SEMDGO is ideal for users who prefer writing in markdown and need a straightforward solution for hosting their markdown content.
+SEMDGO (sem-dee-go) is a high-performance markdown file server written in Go. The name stands for "SErve MarkDown with GO". This project provides a lightweight, efficient solution for serving markdown content with minimal configuration.
 
-### Running semdgo
-Semdgo serves markdown file in `/var/semdgo/content/` folder. The base markdown file to serve in this directory has to be `README.md`. Build image with semdgo image with your content using the following Dockerfile-
+## Overview
+
+SEMDGO is designed for developers and content creators who need a simple yet powerful way to serve markdown-based documentation, blogs, or any markdown content. It eliminates the need for complex frontend frameworks or HTML templating while maintaining clean, readable content structure.
+
+## Technical Specifications
+
+- **Content Directory**: `/var/semdgo/content/`
+- **Default Entry Point**: `README.md`
+- **Port**: 80
+- **Architecture Support**: Multi-architecture (amd64, arm64, arm/v7)
+- **Runtime**: Containerized (Docker)
+
+## Quick Start
+
+### Docker Deployment
+
+1. **Custom Image Build**:
 ```Dockerfile
 FROM shafinhasnat/semdgo
 COPY ./content/ /var/semdgo/content/
 CMD ["./semdgo"]
 ```
-Craete a demo markdown file and name it `README.md`
+
+2. **Docker Compose Deployment**:
 ```yaml
 services:
   semdgo:
@@ -21,14 +36,23 @@ services:
     volumes:
       - ./README.md:/var/semdgo/content/README.md
 ```
-deploy the docker compose definition with `docker-compose up -d` command.
 
-### Building semdgo from source
-To build from source - 
+Deploy using:
+```bash
+docker-compose up -d
+```
+
+## Building from Source
+
+### Local Build
 ```bash
 go build ./cmd/server -o ./dist/semdgo
 ```
-Build the docker image for several cpu architechture with the following command-
+
+### Multi-architecture Docker Build
 ```bash
-docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t shafinhasnat/semdgo --push .
+docker buildx build \
+  --platform linux/amd64,linux/arm64,linux/arm/v7 \
+  -t shafinhasnat/semdgo \
+  --push .
 ```
