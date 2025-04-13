@@ -1,5 +1,5 @@
 ## SEMDGO
-SEMDGO (sem-dee-go) is a tool designed to serve markdown files efficiently. The project was initiated on April 8, 2025, and is actively maintained.
+SEMDGO (sem-dee-go) is a tool designed to serve markdown files efficiently. SEMDGO means `SErve MarkDown with GO`. The project was initiated on April 8, 2025, and is actively maintained.
 
 This tool aims to simplify the process of serving markdown-based content, providing an alternative to traditional HTML or frontend frameworks. SEMDGO is ideal for users who prefer writing in markdown and need a straightforward solution for hosting their markdown content.
 
@@ -8,19 +8,19 @@ Craete a demo markdown file and name it `README.md`
 ```yaml
 services:
   semdgo:
-    image: shafinhasnat/semdgo:0.1
+    image: shafinhasnat/semdgo:0.2
     container_name: semdgo
     ports:
       - "80:80"
     volumes:
-      - ./README.md:/content/README.md
+      - ./README.md:/var/semdgo/content/README.md
 ```
 deploy the docker compose definition with `docker-compose up -d` command.
 
 ### Building semdgo from source
 To build from source - 
 ```bash
-go build
+go build ./cmd/server -o ./dist/semdgo
 ```
 Build the docker image for several cpu architechture with the following command-
 ```bash

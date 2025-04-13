@@ -21,7 +21,7 @@
 /dist/
 /build/
 /tmp/
-
+/utils/
 # Dependency directories
 node_modules/
 
