@@ -8,8 +8,9 @@ RUN GOOS=$(echo $TARGETPLATFORM | cut -d'/' -f1) \
     GOARCH=$(echo $TARGETPLATFORM | cut -d'/' -f2) \
     go build -ldflags "-s -w" -o /semdgo ./cmd/server
 
-FROM scratch
+FROM alpine:latest
 COPY --from=build /semdgo /semdgo
 COPY --from=build /app/templates /templates
+RUN mkdir -p /var/semdgo/content
 EXPOSE 80
 CMD ["/semdgo"]

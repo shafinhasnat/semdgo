@@ -4,6 +4,12 @@ SEMDGO (sem-dee-go) is a tool designed to serve markdown files efficiently. SEMD
 This tool aims to simplify the process of serving markdown-based content, providing an alternative to traditional HTML or frontend frameworks. SEMDGO is ideal for users who prefer writing in markdown and need a straightforward solution for hosting their markdown content.
 
 ### Running semdgo
+Semdgo serves markdown file in `/var/semdgo/content/` folder. The base markdown file to serve in this directory has to be `README.md`. Build image with semdgo image with your content using the following Dockerfile-
+```Dockerfile
+FROM shafinhasnat/semdgo
+COPY ./content/ /var/semdgo/content/
+CMD ["./semdgo"]
+```
 Craete a demo markdown file and name it `README.md`
 ```yaml
 services:

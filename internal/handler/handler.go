@@ -31,5 +31,6 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 	}
 	tmpl.Execute(w, map[string]interface{}{
 		"Content": string(html),
+		"Path":    strings.TrimPrefix(path, "/var/semdgo/content"),
 	})
 }
