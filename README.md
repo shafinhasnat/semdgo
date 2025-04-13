@@ -14,7 +14,7 @@ Craete a demo markdown file and name it `README.md`
 ```yaml
 services:
   semdgo:
-    image: shafinhasnat/semdgo:0.2
+    image: shafinhasnat/semdgo
     container_name: semdgo
     ports:
       - "80:80"
