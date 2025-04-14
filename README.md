@@ -1,5 +1,5 @@
 # SEMDGO
-
+![](semdgo.png)
 SEMDGO (sem-dee-go) is a high-performance markdown file server written in Go. The name stands for "SErve MarkDown with GO". This project provides a lightweight, efficient solution for serving markdown content with minimal configuration.
 
 ## Overview
