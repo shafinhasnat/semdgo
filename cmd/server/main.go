@@ -21,7 +21,7 @@ func main() {
 		log.Fatalf("Invalid configuration: %v", err)
 	}
 
-	http.HandleFunc("/", handler.New(cfg.ContentPath, cfg.ContentEntrypoint))
+	http.HandleFunc("/", handler.New(cfg.ContentDir, cfg.ContentEntrypoint))
 
 	if cfg.LetsEncrypt.Enabled {
 		m := &autocert.Manager{
