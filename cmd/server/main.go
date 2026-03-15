@@ -17,13 +17,13 @@ func main() {
 		log.Fatalf("Failed to load config: %v", err)
 	}
 
-	http.HandleFunc("/", handler.New(cfg.ContentPath))
+	if err := config.Validate(cfg); err != nil {
+		log.Fatalf("Invalid configuration: %v", err)
+	}
+
+	http.HandleFunc("/", handler.New(cfg.ContentPath, cfg.ContentEntrypoint))
 
 	if cfg.LetsEncrypt.Enabled {
-		if cfg.LetsEncrypt.Domain == "" {
-			log.Fatal("letsencrypt.domain must be set when letsencrypt.enabled is true")
-		}
-
 		m := &autocert.Manager{
 			Prompt:     autocert.AcceptTOS,
 			HostPolicy: autocert.HostWhitelist(cfg.LetsEncrypt.Domain),

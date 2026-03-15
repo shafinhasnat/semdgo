@@ -9,7 +9,7 @@ SEMDGO is designed for developers and content creators who need a simple yet pow
 ## Technical Specifications
 
 - **Content Directory**: `/var/semdgo/content/` (configurable via `content_path`)
-- **Default Entry Point**: `README.md`
+- **Default Entry Point**: `README.md` (configurable via `content_entrypoint`)
 - **Default Port**: 80
 - **Architecture Support**: Multi-architecture (amd64, arm64, arm/v7)
 - **Runtime**: Containerized (Docker)
@@ -26,7 +26,17 @@ SEMDGO can be configured by placing a `semdgo.json` file in the working director
 }
 ```
 
-The default is `/var/semdgo/content`. The directory must contain a `README.md` as the entry point.
+The default is `/var/semdgo/content`.
+
+### Custom Entry Point
+
+```json
+{
+  "content_entrypoint": "index.md"
+}
+```
+
+The default is `README.md`. This file must exist inside `content_path` — SEMDGO validates this on startup and will refuse to start if it is missing.
 
 ### Custom Port
 

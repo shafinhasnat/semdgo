@@ -11,9 +11,9 @@ import (
 	"github.com/shafinhasnat/semdgo/internal/utils"
 )
 
-func New(contentPath string) http.HandlerFunc {
+func New(contentPath, entrypoint string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		path := utils.ClickedHyperlink(r, contentPath)
+		path := utils.ClickedHyperlink(r, contentPath, entrypoint)
 		log.Printf("Status: %d | path: %s\n", http.StatusOK, path)
 		content, err := os.ReadFile(path)
 		if err != nil {
