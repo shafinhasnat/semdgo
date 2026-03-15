@@ -36,16 +36,21 @@ All fields are optional. Place the file next to the binary (or mount it into the
 | Key                  | Type   | Default                  | Description                              |
 |----------------------|--------|--------------------------|------------------------------------------|
 | `port`               | int    | `80`                     | HTTP listen port                         |
-| `content_path`       | string | `/var/semdgo/content`    | Directory containing markdown files      |
-| `content_entrypoint` | string | `README.md`              | File served at `/`                       |
+| `content_path`       | string | `/var/semdgo/content`    | Path to content dir or a specific `.md` file |
 | `letsencrypt.enabled`| bool   | `false`                  | Enable automatic HTTPS via Let's Encrypt |
 | `letsencrypt.domain` | string | —                        | Required when `enabled` is true          |
 | `letsencrypt.email`  | string | —                        | Optional, for cert expiry notifications  |
 
+`content_path` behaviour:
+- **Directory** → serves files from it, entry point is `README.md`
+- **`.md` file** → serves files from its parent dir, that file is the entry point
+
 Startup validation (via `config.Validate`) will fatal if:
-- `content_path` does not exist or is not a directory
-- `content_path/content_entrypoint` does not exist
+- `content_path` does not exist
+- the resolved entry point file does not exist
 - `letsencrypt.enabled` is true but `letsencrypt.domain` is empty
+
+`Validate` also sets the unexported-facing fields `cfg.ContentDir` and `cfg.ContentEntrypoint` which are consumed by the handler.
 
 ## Key Implementation Notes
 

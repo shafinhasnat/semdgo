@@ -14,17 +14,19 @@ type LetsEncryptConfig struct {
 }
 
 type Config struct {
-	Port             int               `json:"port"`
-	ContentPath      string            `json:"content_path"`
-	ContentEntrypoint string           `json:"content_entrypoint"`
-	LetsEncrypt      LetsEncryptConfig `json:"letsencrypt"`
+	Port        int               `json:"port"`
+	ContentPath string            `json:"content_path"`
+	LetsEncrypt LetsEncryptConfig `json:"letsencrypt"`
+
+	// Resolved during Validate — not user-facing
+	ContentDir        string `json:"-"`
+	ContentEntrypoint string `json:"-"`
 }
 
 func Load() (*Config, error) {
 	cfg := &Config{
-		Port:              80,
-		ContentPath:       "/var/semdgo/content",
-		ContentEntrypoint: "README.md",
+		Port:        80,
+		ContentPath: "/var/semdgo/content",
 	}
 
 	data, err := os.ReadFile("semdgo.json")
@@ -45,9 +47,6 @@ func Load() (*Config, error) {
 	if cfg.ContentPath == "" {
 		cfg.ContentPath = "/var/semdgo/content"
 	}
-	if cfg.ContentEntrypoint == "" {
-		cfg.ContentEntrypoint = "README.md"
-	}
 
 	return cfg, nil
 }
@@ -60,16 +59,21 @@ func Validate(cfg *Config) error {
 		}
 		return fmt.Errorf("content_path %q: %w", cfg.ContentPath, err)
 	}
-	if !info.IsDir() {
-		return fmt.Errorf("content_path %q is not a directory", cfg.ContentPath)
+
+	if info.IsDir() {
+		cfg.ContentDir = cfg.ContentPath
+		cfg.ContentEntrypoint = "README.md"
+	} else {
+		cfg.ContentDir = filepath.Dir(cfg.ContentPath)
+		cfg.ContentEntrypoint = filepath.Base(cfg.ContentPath)
 	}
 
-	entrypoint := filepath.Join(cfg.ContentPath, cfg.ContentEntrypoint)
+	entrypoint := filepath.Join(cfg.ContentDir, cfg.ContentEntrypoint)
 	if _, err := os.Stat(entrypoint); err != nil {
 		if os.IsNotExist(err) {
-			return fmt.Errorf("content_entrypoint %q does not exist in %q", cfg.ContentEntrypoint, cfg.ContentPath)
+			return fmt.Errorf("entrypoint %q does not exist", entrypoint)
 		}
-		return fmt.Errorf("content_entrypoint %q: %w", entrypoint, err)
+		return fmt.Errorf("entrypoint %q: %w", entrypoint, err)
 	}
 
 	if cfg.LetsEncrypt.Enabled && cfg.LetsEncrypt.Domain == "" {

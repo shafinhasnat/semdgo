@@ -8,8 +8,8 @@ SEMDGO is designed for developers and content creators who need a simple yet pow
 
 ## Technical Specifications
 
-- **Content Directory**: `/var/semdgo/content/` (configurable via `content_path`)
-- **Default Entry Point**: `README.md` (configurable via `content_entrypoint`)
+- **Content Path**: `/var/semdgo/content/` (configurable via `content_path`)
+- **Default Entry Point**: `README.md`
 - **Default Port**: 80
 - **Architecture Support**: Multi-architecture (amd64, arm64, arm/v7)
 - **Runtime**: Containerized (Docker)
@@ -18,25 +18,25 @@ SEMDGO is designed for developers and content creators who need a simple yet pow
 
 SEMDGO can be configured by placing a `semdgo.json` file in the working directory (next to the binary or mounted into the container).
 
-### Custom Content Path
+### Content Path
 
+`content_path` controls both where content is served from and which file is the entry point at `/`.
+
+**Point to a directory** — serves all files from that directory, uses `README.md` as the entry point:
 ```json
 {
   "content_path": "/path/to/your/content"
 }
 ```
 
-The default is `/var/semdgo/content`.
-
-### Custom Entry Point
-
+**Point to a specific `.md` file** — serves files from its parent directory, uses that file as the entry point:
 ```json
 {
-  "content_entrypoint": "index.md"
+  "content_path": "/path/to/your/content/index.md"
 }
 ```
 
-The default is `README.md`. This file must exist inside `content_path` — SEMDGO validates this on startup and will refuse to start if it is missing.
+The default is `/var/semdgo/content` (directory). SEMDGO validates the path and entry point on startup and will refuse to start if either is missing.
 
 ### Custom Port
 
@@ -135,14 +135,19 @@ cd semdgo
 go mod download
 ```
 
-3. **Prepare content**: By default SEMDGO serves files from `/var/semdgo/content/`. You can either create that directory or point to any local path via `semdgo.json`:
+3. **Prepare content**: Point `content_path` at a directory (needs a `README.md` inside) or directly at a `.md` file:
 ```json
 {
   "content_path": "/home/you/my-docs",
   "port": 8080
 }
 ```
-The directory must contain a `README.md` as the entry point.
+```json
+{
+  "content_path": "/home/you/my-docs/index.md",
+  "port": 8080
+}
+```
 
 4. **Run directly with Go**:
 ```bash
