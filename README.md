@@ -95,11 +95,58 @@ Deploy using:
 docker-compose up -d
 ```
 
+## Running Locally
+
+### Prerequisites
+
+- Go 1.24+
+- Git
+
+### Steps
+
+1. **Clone the repository**:
+```bash
+git clone https://github.com/shafinhasnat/semdgo.git
+cd semdgo
+```
+
+2. **Install dependencies**:
+```bash
+go mod download
+```
+
+3. **Prepare content**: SEMDGO serves files from `/var/semdgo/content/`. Create the directory and add markdown files, or symlink your own:
+```bash
+sudo mkdir -p /var/semdgo/content/
+sudo cp README.md /var/semdgo/content/
+```
+
+4. **Run directly with Go**:
+```bash
+go run ./cmd/server
+```
+
+Or build first, then run:
+```bash
+go build -o ./dist/semdgo ./cmd/server
+./dist/semdgo
+```
+
+5. **Open in browser**: Navigate to `http://localhost` (or the port set in `semdgo.json`).
+
+To use a custom port without root privileges, create a `semdgo.json` in the working directory:
+```json
+{
+  "port": 8080
+}
+```
+Then run `./dist/semdgo` and open `http://localhost:8080`.
+
 ## Building from Source
 
 ### Local Build
 ```bash
-go build ./cmd/server -o ./dist/semdgo
+go build -o ./dist/semdgo ./cmd/server
 ```
 
 ### Multi-architecture Docker Build
