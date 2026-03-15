@@ -17,7 +17,7 @@ func main() {
 		log.Fatalf("Failed to load config: %v", err)
 	}
 
-	http.HandleFunc("/", handler.Handle)
+	http.HandleFunc("/", handler.New(cfg.ContentPath))
 
 	if cfg.LetsEncrypt.Enabled {
 		if cfg.LetsEncrypt.Domain == "" {

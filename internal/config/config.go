@@ -13,12 +13,14 @@ type LetsEncryptConfig struct {
 
 type Config struct {
 	Port        int               `json:"port"`
+	ContentPath string            `json:"content_path"`
 	LetsEncrypt LetsEncryptConfig `json:"letsencrypt"`
 }
 
 func Load() (*Config, error) {
 	cfg := &Config{
-		Port: 80,
+		Port:        80,
+		ContentPath: "/var/semdgo/content",
 	}
 
 	data, err := os.ReadFile("semdgo.json")
@@ -35,6 +37,9 @@ func Load() (*Config, error) {
 
 	if cfg.Port == 0 {
 		cfg.Port = 80
+	}
+	if cfg.ContentPath == "" {
+		cfg.ContentPath = "/var/semdgo/content"
 	}
 
 	return cfg, nil

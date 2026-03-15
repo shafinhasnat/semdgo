@@ -2,13 +2,10 @@ package utils
 
 import "net/http"
 
-func ClickedHyperlink(r *http.Request) string {
-	basepath := "/var/semdgo/content"
+func ClickedHyperlink(r *http.Request, basepath string) string {
 	link := r.URL.Path
 	if link == "/" {
-		path := basepath + "/README.md"
-		return path
+		return basepath + "/README.md"
 	}
-	path := basepath + link
-	return path
+	return basepath + link
 }

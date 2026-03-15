@@ -8,7 +8,7 @@ SEMDGO is designed for developers and content creators who need a simple yet pow
 
 ## Technical Specifications
 
-- **Content Directory**: `/var/semdgo/content/`
+- **Content Directory**: `/var/semdgo/content/` (configurable via `content_path`)
 - **Default Entry Point**: `README.md`
 - **Default Port**: 80
 - **Architecture Support**: Multi-architecture (amd64, arm64, arm/v7)
@@ -17,6 +17,16 @@ SEMDGO is designed for developers and content creators who need a simple yet pow
 ## Configuration
 
 SEMDGO can be configured by placing a `semdgo.json` file in the working directory (next to the binary or mounted into the container).
+
+### Custom Content Path
+
+```json
+{
+  "content_path": "/path/to/your/content"
+}
+```
+
+The default is `/var/semdgo/content`. The directory must contain a `README.md` as the entry point.
 
 ### Custom Port
 
@@ -115,11 +125,14 @@ cd semdgo
 go mod download
 ```
 
-3. **Prepare content**: SEMDGO serves files from `/var/semdgo/content/`. Create the directory and add markdown files, or symlink your own:
-```bash
-sudo mkdir -p /var/semdgo/content/
-sudo cp README.md /var/semdgo/content/
+3. **Prepare content**: By default SEMDGO serves files from `/var/semdgo/content/`. You can either create that directory or point to any local path via `semdgo.json`:
+```json
+{
+  "content_path": "/home/you/my-docs",
+  "port": 8080
+}
 ```
+The directory must contain a `README.md` as the entry point.
 
 4. **Run directly with Go**:
 ```bash
