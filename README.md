@@ -8,11 +8,63 @@ SEMDGO is designed for developers and content creators who need a simple yet pow
 
 ## Technical Specifications
 
-- **Content Directory**: `/var/semdgo/content/`
+- **Content Path**: `/var/semdgo/content/` (configurable via `content_path`)
 - **Default Entry Point**: `README.md`
-- **Port**: 80
+- **Default Port**: 80
 - **Architecture Support**: Multi-architecture (amd64, arm64, arm/v7)
 - **Runtime**: Containerized (Docker)
+
+## Configuration
+
+SEMDGO can be configured by placing a `semdgo.json` file in the working directory (next to the binary or mounted into the container).
+
+### Content Path
+
+`content_path` controls both where content is served from and which file is the entry point at `/`.
+
+**Point to a directory** — serves all files from that directory, uses `README.md` as the entry point:
+```json
+{
+  "content_path": "/path/to/your/content"
+}
+```
+
+**Point to a specific `.md` file** — serves files from its parent directory, uses that file as the entry point:
+```json
+{
+  "content_path": "/path/to/your/content/index.md"
+}
+```
+
+The default is `/var/semdgo/content` (directory). SEMDGO validates the path and entry point on startup and will refuse to start if either is missing.
+
+### Custom Port
+
+```json
+{
+  "port": 8080
+}
+```
+
+### Automatic HTTPS with Let's Encrypt
+
+SEMDGO supports automatic TLS certificate provisioning via Let's Encrypt — no manual certificate management required. When enabled, HTTP traffic on port 80 is automatically redirected to HTTPS on port 443.
+
+> **Requirements**: your domain must point to the server and ports 80 and 443 must be publicly reachable.
+
+```json
+{
+  "letsencrypt": {
+    "enabled": true,
+    "domain": "docs.example.com",
+    "email": "you@example.com"
+  }
+}
+```
+
+Certificates are cached at `/var/semdgo/certs` and auto-renewed before expiry.
+
+If no `semdgo.json` is present, SEMDGO defaults to port 80 over plain HTTP.
 
 ## Quick Start
 
@@ -26,6 +78,21 @@ CMD ["./semdgo"]
 ```
 
 2. **Docker Compose Deployment**:
+
+Plain HTTP on a custom port:
+```yaml
+services:
+  semdgo:
+    image: shafinhasnat/semdgo
+    container_name: semdgo
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./README.md:/var/semdgo/content/README.md
+      - ./semdgo.json:/semdgo.json
+```
+
+With Let's Encrypt HTTPS:
 ```yaml
 services:
   semdgo:
@@ -33,8 +100,14 @@ services:
     container_name: semdgo
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./README.md:/var/semdgo/content/README.md
+      - ./semdgo.json:/semdgo.json
+      - semdgo_certs:/var/semdgo/certs
+
+volumes:
+  semdgo_certs:
 ```
 
 Deploy using:
@@ -42,11 +115,66 @@ Deploy using:
 docker-compose up -d
 ```
 
+## Running Locally
+
+### Prerequisites
+
+- Go 1.24+
+- Git
+
+### Steps
+
+1. **Clone the repository**:
+```bash
+git clone https://github.com/shafinhasnat/semdgo.git
+cd semdgo
+```
+
+2. **Install dependencies**:
+```bash
+go mod download
+```
+
+3. **Prepare content**: Point `content_path` at a directory (needs a `README.md` inside) or directly at a `.md` file:
+```json
+{
+  "content_path": "/home/you/my-docs",
+  "port": 8080
+}
+```
+```json
+{
+  "content_path": "/home/you/my-docs/index.md",
+  "port": 8080
+}
+```
+
+4. **Run directly with Go**:
+```bash
+go run ./cmd/server
+```
+
+Or build first, then run:
+```bash
+go build -o ./dist/semdgo ./cmd/server
+./dist/semdgo
+```
+
+5. **Open in browser**: Navigate to `http://localhost` (or the port set in `semdgo.json`).
+
+To use a custom port without root privileges, create a `semdgo.json` in the working directory:
+```json
+{
+  "port": 8080
+}
+```
+Then run `./dist/semdgo` and open `http://localhost:8080`.
+
 ## Building from Source
 
 ### Local Build
 ```bash
-go build ./cmd/server -o ./dist/semdgo
+go build -o ./dist/semdgo ./cmd/server
 ```
 
 ### Multi-architecture Docker Build

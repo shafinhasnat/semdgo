@@ -1,14 +1,14 @@
 package utils
 
-import "net/http"
+import (
+	"net/http"
+	"path/filepath"
+)
 
-func ClickedHyperlink(r *http.Request) string {
-	basepath := "/var/semdgo/content"
+func ClickedHyperlink(r *http.Request, basepath, entrypoint string) string {
 	link := r.URL.Path
 	if link == "/" {
-		path := basepath + "/README.md"
-		return path
+		return filepath.Join(basepath, entrypoint)
 	}
-	path := basepath + link
-	return path
+	return filepath.Join(basepath, link)
 }
